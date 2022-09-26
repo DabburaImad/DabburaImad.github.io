@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Imad Dabbura">
 <meta name="dcterms.date" content="2018-04-08">
 
 <title>Imad Dabbura - Coding Neural Network Part 2 - Gradient Checking</title>
@@ -96,8 +95,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="../../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../../">
 <link href="../../../profile.jpg" rel="icon" type="image/jpeg">
-<script src="../../../site_libs/quarto-listing/list.min.js"></script>
-<script src="../../../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -128,35 +125,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-submit-button-title": "Submit"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: [{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: [],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -168,7 +136,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -256,12 +224,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   
   <div class="quarto-title-meta">
 
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Imad Dabbura </p>
-            </div>
-    </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
@@ -276,16 +238,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
-    </div>
+    
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -307,9 +260,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </figure>
 </div>
 <p>Two-sided form of approximating the derivative is closer than the right-hand form. Let’s illustrate that with the following example using the function <span class="math inline">\(f(x) = x^2\)</span> by taking its derivative at <span class="math inline">\(x = 3\)</span>. - Analytical derivative: <span class="math display">\[\nabla_x f(x) = 2x\ \Rightarrow\nabla_x f(3) = 6\]</span> - Two-sided numerical derivative: <span class="math display">\[\frac{(3 + 1e-2)^2 - (3 - 1e-2)^2}{2 * 1e-2} = 5.999999999999872\]</span> - Right-hand numerical derivative: <span class="math display">\[\frac{(3 + 1e-2)^2 - 3^2}{1e-2} = 6.009999999999849\]</span> As we see above, the difference between analytical derivative and two-sided numerical gradient is almost zero; however, the difference between analytical derivative and right-sided derivative is 0.01. Therefore, we’ll use two-sided epsilon method to compute the numerical gradients.</p>
-<p>In addition, we’ll normalize the difference between numerical. gradients and analytical gradients using the following formula: $<span class="math display">\[$
-\]</span><span class="math display">\[
-\]</span>$$ If the difference is <span class="math inline">\(\leq 10^{-7}\)</span>, then our implementation is fine; otherwise, we have a mistake somewhere and have to go back and revisit backpropagation code.</p>
+<p>In addition, we’ll normalize the difference between numerical. gradients and analytical gradients using the following formula: <span class="math display">\[\frac{\|grad - grad_{approx}\|_2}{\|grad\|_2 + \|grad_{approx}\|_2}\tag{3}\]</span> If the difference is <span class="math inline">\(\leq 10^{-7}\)</span>, then our implementation is fine; otherwise, we have a mistake somewhere and have to go back and revisit backpropagation code.</p>
 <p>Below are the steps needed to implement gradient checking: 1. Pick random number of examples from training data to use it when computing both numerical and analytical gradients. - Don’t use all examples in the training data because gradient checking is very slow. 2. Initialize parameters. 3. Compute forward propagation and the cross-entropy cost. 4. Compute the gradients using our back-propagation implementation. 5. Compute the numerical gradients using the two-sided epsilon method. 6. Compute the difference between numerical and analytical gradients.</p>
 <p>We’ll be using functions we wrote in <em>“Coding Neural Network - Forward Propagation and Backpropagation”</em> notebook to initialize parameters, compute forward propagation and back-propagation as well as the cross-entropy cost.</p>
 <p>Let’s first import the data.</p>
@@ -603,17 +554,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 
 
-
 </section>
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
