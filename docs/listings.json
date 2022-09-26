@@ -67,5 +67,11 @@
       "/posts/character-language-model/Character-LeveL-Language-Model.html",
       "/posts/employee-turnover/Employee-Turnover.html"
     ]
+  },
+  {
+    "listing": "/mlops-index.html",
+    "items": [
+      "/mlops/airflow/index.html"
+    ]
   }
 ]
