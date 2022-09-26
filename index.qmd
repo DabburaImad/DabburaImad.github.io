@@ -10,7 +10,7 @@ listing:
   sort-ui: true
   filter-ui: true
   fields: [image, date, title, subtitle, categories, author, reading-time]
-  page-size: 10
+  page-size: 9
 image-align: left
 page-layout: full
 title-block-banner: true
