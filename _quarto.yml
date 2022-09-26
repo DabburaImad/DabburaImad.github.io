@@ -1,6 +1,5 @@
 project:
   type: website
-  output-dir: docs
 
 website:
   title: "Imad Dabbura"
@@ -37,6 +36,8 @@ website:
         file: index.qmd
       - text: Projects
         file: projects-index.qmd
+      - text: MLOps
+        file: mlops-index.qmd
       - text: "Today I Learned"
         file: til.qmd
       - text: Resume
