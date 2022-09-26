@@ -5,7 +5,7 @@ project:
 website:
   title: "Imad Dabbura"
   repo-url: https://github.com/imaddabbura/imaddabbura.github.io
-  repo-actions: [issue, edit]
+  repo-actions: [issue]
   favicon: profile.jpg
   page-navigation: true
   reader-mode: true
