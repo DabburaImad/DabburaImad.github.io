@@ -7,10 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2019-04-22">
-<meta name="description" content="Build a classifier to predict whether a given patient will have TIA and deploy the best model as a RESTful API.">
+<meta name="dcterms.date" content="2022-09-26">
 
-<title>Imad Dabbura - Transient Ischemic Attack</title>
+<title>Imad Dabbura - Airflow Part 8 - Best Practices</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,6 +22,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -67,9 +129,8 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta name="twitter:title" content="Imad Dabbura - Transient Ischemic Attack">
-<meta name="twitter:description" content="Build a classifier to predict whether a given patient will have TIA and deploy the best model as a RESTful API.">
-<meta name="twitter:image" content="feature.jpg">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 8 - Best Practices">
+<meta name="twitter:image" content="feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -150,15 +211,10 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Transient Ischemic Attack</h1>
-                  <div>
-        <div class="description">
-          Build a classifier to predict whether a given patient will have TIA and deploy the best model as a RESTful API.
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">Machine Learning</div>
-                <div class="quarto-category">Deep Learning</div>
+      <h1 class="title">Airflow Part 8 - Best Practices</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Data Engineering</div>
+                <div class="quarto-category">MLOps</div>
               </div>
                   </div>
   </div>
@@ -176,7 +232,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">April 22, 2019</p>
+        <p class="date">September 26, 2022</p>
       </div>
     </div>
       
@@ -195,10 +251,92 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p><img src="feature.jpg" class="img-fluid"> A transient ischemic attack (TIA) is like a stroke, producing similar symptoms, but usually lasting only a few minutes and causing no permanent damage. Often called a ministroke, a transient ischemic attack may be a warning.</p>
-<p>About 1 in 3 people who have a transient ischemic attack will eventually have a stroke, with about half occurring within a year after the transient ischemic attack.</p>
-<p>The goal of this project is to build a binary classifier to predict Transient Ischemic Attack (TIA) and then deploy the best model as a RESTful API.</p>
-<p>Check out the project on <a href="https://github.com/ImadDabbura/transient-ischemic-attack">github</a>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="feature.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<ul>
+<li>Stick to coding style conventions by using tools like flake8, pylint, black</li>
+<li>There are two ways to define DAGs. Stick to one of them:
+<ol type="1">
+<li>With context manager:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a> <span class="cf">with</span> DAG(...) <span class="im">as</span> dag:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>      task1 <span class="op">=</span> PythonOperator(...)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>      task2 <span class="op">=</span> PythonOperator(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>Traditional:</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a> dag <span class="op">=</span> DAG(...)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a> task1 <span class="op">=</span> PythonOperator(..., dag<span class="op">=</span>dag)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a> task2 <span class="op">=</span> PythonOperator(..., dag<span class="op">=</span>dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>There are also multiple ways to define dependencies. Stick to one of them:</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    task1 <span class="op">&gt;&gt;</span> task2</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    task1 <span class="op">&lt;&lt;</span> task2</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    [task1] <span class="op">&gt;&gt;</span> task2</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    task1.set_downstream(task2)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    task2.set_upstream(task1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>When loading config files, make sure to understand where the loading happens:
+<ul>
+<li>At the top level on the scheduler</li>
+<li>At the DAG level when it is parsed</li>
+<li>Or when the DAG is executing -&gt; in the worker</li>
+</ul></li>
+<li>Avoid doing any computation in DAG definition:
+<ul>
+<li>At the top level, it will be computed every time the DAG is loaded</li>
+<li>In the DAG definition, it will be executed every time the DAG is parsed by the scheduler</li>
+<li>In the task, it will be computed when the task is executed on the worker machine</li>
+</ul></li>
+<li>Fetch credentials within the task, so they are only fetched once the task is executed</li>
+<li>Use factory methods to generate DAGs or set of tasks that are almost typical with few minor changes. Example:</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_tasks(dataset_name, raw_dir, processed_dir, preprocess_script, output_dir, dag):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    raw_path <span class="op">=</span> os.path.join(raw_dir, dataset_name, <span class="st">"</span><span class="sc">{ds_nodash}</span><span class="st">.json"</span>) </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    processed_path <span class="op">=</span> os.path.join(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    processed_dir, dataset_name, <span class="st">"</span><span class="sc">{ds_nodash}</span><span class="st">.json"</span> )</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    output_path <span class="op">=</span> os.path.join(output_dir, dataset_name, <span class="st">"</span><span class="sc">{ds_nodash}</span><span class="st">.json"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    fetch_task <span class="op">=</span> BashOperator(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"fetch_</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        bash_command<span class="op">=</span><span class="ss">f"echo 'curl http://example.com/</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">.json</span><span class="sc">{</span>raw_path<span class="sc">}</span><span class="ss">.json'"</span>, dag<span class="op">=</span>dag,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    preprocess_task <span class="op">=</span> BashOperator(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"preprocess_</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        bash_command<span class="op">=</span><span class="ss">f"echo '</span><span class="sc">{</span>preprocess_script<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>raw_path<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>processed_path<span class="sc">}</span><span class="ss">'"</span>, dag<span class="op">=</span>dag,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    export_task <span class="op">=</span> BashOperator(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"export_</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        bash_command<span class="op">=</span><span class="ss">f"echo 'cp </span><span class="sc">{</span>processed_path<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>output_path<span class="sc">}</span><span class="ss">'"</span>, dag<span class="op">=</span>dag,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>       )</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        fetch_task <span class="op">&gt;&gt;</span> preprocess_task <span class="op">&gt;&gt;</span> export_task</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fetch_task, export_task</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    dag_id<span class="op">=</span><span class="st">"01_task_factory"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">5</span>),</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    schedule_interval<span class="op">=</span><span class="st">"@daily"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>) <span class="im">as</span> dag:</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dataset <span class="kw">in</span> [<span class="st">"sales"</span>, <span class="st">"customers"</span>]:</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        generate_tasks(</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            dataset_name<span class="op">=</span>dataset,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            raw_dir<span class="op">=</span><span class="st">"/data/raw"</span>, </span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>            processed_dir<span class="op">=</span><span class="st">"/data/processed"</span>, </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>            output_dir<span class="op">=</span><span class="st">"/data/output"</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>            preprocess_script<span class="op">=</span><span class="ss">f"preprocess_</span><span class="sc">{</span>dataset<span class="sc">}</span><span class="ss">.py"</span>, dag<span class="op">=</span>dag</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>We can use <code>TaskGroup</code> to group related tasks into groups that will help us navigating the DAG in the UI. This is very helpful when DAGs become very complicated</li>
+<li>Create new DAGs for big changes such as renaming/removing tasks or changing the schedule_date/interval so we can keep the historical info about old DAGs and not confuse the scheduler. Scheduler database has instances of the runs of each DAG</li>
+<li>Make sure that tasks are idempotenet -&gt; Regardless when they run, If given the same input the should produce the same output. Therefore, be careful when writing data. We may want to overwrite or upsert to avoid appending the same data
+<ul>
+<li>Also, tasks should not have side effects</li>
+</ul></li>
+<li>Avoid writing intermediate results on local filesystem because each task runs independently (and mostly on different machines) -&gt; Use cloud shared storage such as Amazon’s S3 bucket where all workers can access it</li>
+<li>We can use SLAs on each DAG/task where Airflow will notify if they don’t finish within SLA. DAG takes <code>sla</code> argument</li>
+</ul>
 
 
 

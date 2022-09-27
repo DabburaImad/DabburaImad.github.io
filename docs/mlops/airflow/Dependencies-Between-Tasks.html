@@ -7,10 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2019-04-08">
-<meta name="description" content="Build a Relational Database using Star Schema of song’s users activities data.">
+<meta name="dcterms.date" content="2022-09-26">
 
-<title>Imad Dabbura - Data Modeling with Postgres</title>
+<title>Imad Dabbura - Airflow Part 5 - Dependencies Between Tasks</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -130,8 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta name="twitter:title" content="Imad Dabbura - Data Modeling with Postgres">
-<meta name="twitter:description" content="Build a Relational Database using Star Schema of song’s users activities data.">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 5 - Dependencies Between Tasks">
 <meta name="twitter:image" content="feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -213,14 +211,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Data Modeling with Postgres</h1>
-                  <div>
-        <div class="description">
-          Build a Relational Database using Star Schema of song’s users activities data.
-        </div>
-      </div>
-                          <div class="quarto-categories">
+      <h1 class="title">Airflow Part 5 - Dependencies Between Tasks</h1>
+                                <div class="quarto-categories">
                 <div class="quarto-category">Data Engineering</div>
+                <div class="quarto-category">MLOps</div>
               </div>
                   </div>
   </div>
@@ -238,7 +232,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">April 8, 2019</p>
+        <p class="date">September 26, 2022</p>
       </div>
     </div>
       
@@ -249,17 +243,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
-  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
-  <li><a href="#how-to" id="toc-how-to" class="nav-link" data-scroll-target="#how-to">HOW TO</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -269,61 +253,106 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="feature.png" width="300" height="300" class="figure-img"></p>
+<p><img src="feature.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>The goal of this project is to build a PostgreSQL database utilizing the data on users activity and songs metadata. Building the database helps us do complex analytics regarding users activity as well as song play analysis.</p>
-</section>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
-<p>The songs’ metadata sourse is a subset of the <a href="https://labrosa.ee.columbia.edu/millionsong/">Million Song Dataset</a>. Also, the users’ activities is a simulated data using <a href="https://github.com/Interana/eventsim">eventsim</a>. The data resides in two main directories:</p>
 <ul>
-<li>Songs metadata: collection of JSON files that describes the songs such as title, artist name, year, etc.</li>
-<li>Logs data: collection of JSON files where each file covers the users activities over a given day.</li>
-</ul>
-</section>
-<section id="methodology" class="level2">
-<h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
-<p>We’ll build the database by optimizing the tables around efficient reads for complex queries. To do that, <strong>Star</strong> schema will be used utilizing dimensional modeling as follows:</p>
-<ul>
-<li>Fact table: songplays.</li>
-<li>Dimensions tables: songs, artist, users, time.</li>
-</ul>
-<p>The three most important advantages of using Star schema are:</p>
-<ul>
-<li>Denormalized tables.</li>
-<li>Simplified queries.</li>
-<li>Fast aggregation.</li>
-</ul>
-</section>
-<section id="how-to" class="level2">
-<h2 class="anchored" data-anchor-id="how-to">HOW TO</h2>
-<p>The source code is available in three separate <strong>Python</strong> scripts. Below is a brief description of the main files:</p>
+<li>Dependencies in airflow is specified using the right shift symbol <code>&gt;&gt;</code>. It tells Airflow which tasks should be run first before running other tasks.</li>
+<li>Basic Dependenices:
 <ol type="1">
-<li><code>sql_queries.py</code> has all the queries needed to both create/drop tables for the database as well as a SQL query to get song_id and artist_id from other tables since they are not provided in logs dataset.</li>
-<li><code>create_tables.py</code> creates the database, establish the connection and creates/drops all the tables required using sql_queries module.</li>
-<li><code>etl.py</code> build the pipeline that extracts the data from JSON files, does some transformation (such as adding different time attributes from timestamp) and then insert all the data into the corresponding tables.</li>
+<li><strong>Linear dependenies</strong>: <code>a &gt;&gt; b &gt;&gt; c</code>. This means that <code>a</code> has to run before <code>b</code> which should run before <code>c</code>. If any task fails, the downstream task won’t run and the errors are propagated to them from preceding tasks. They can only run after the errors are fixed for that interval.</li>
+<li><strong>Fan-in/Fan-out dependencies</strong> <img src="images/fan-in-out.png">:
+<ul>
+<li>Fan-in: When 1 task is dependent on &gt;= 2 tasks to run. <em>join_datasets</em> is fan-in task. Fan-in tasks can be specified as: <code>[clean_sales, clean_weather] &gt;&gt; join_datasets</code></li>
+<li>Fan-out: When &gt;= 2 tasks are dependent on 1 task to run. <em>start</em> is a fan-out task. Fan-out tasks can be specified as: <code>start &gt;&gt; [fetch_sales, fetch_weather]</code></li>
+<li>This is how we can specify dependencies for the DAG in the above picture:</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    start <span class="op">&gt;&gt;</span> [fetch_sales, fetch_weather]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    fetch_sales <span class="op">&gt;&gt;</span> clean_sales</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    [clean_sales, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    join_datasets <span class="op">&gt;&gt;</span> train_model</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    train_model <span class="op">&gt;&gt;</span> deploy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol></li>
+<li>Branching:
+<ol type="1">
+<li>We can take care of conditional execution of code paths inside the task, i.e.&nbsp;inside Python script in the case of PythonOperator. Depending on some condition during execution, different code paths and logic will be followed. The main disadvantages of this approach is that 1) it is hard to figure out with code path is being executed on each run from tree/graph view unless we have logging enabled, 2) Adds more complexity to the code structure, 3) May not let us use specialized operators that abstract aways a lot of the boilerplate code such as PostgresOperator. For example, if we have fetch data from either CSV or SQL database depending on condition at execution.</li>
+<li>We can add <code>BrachPythonOperator</code>task that takes a Python callable to determine which tasks to execute next. The Python callable has to return the task_id of the task (or list of task_id) that Airflow should execute next. Example: <img src="images/branching-v1.png"></li>
 </ol>
-<p>Therefore, we first run <code>create_tables.py</code> then <code>etl.py</code> to create the database, create tables, and then insert the data using the ETL pipeline.</p>
-</section>
-<section id="examples" class="level2">
-<h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext sql</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>sql postgresql:<span class="op">//</span>student:student<span class="op">@</span><span class="fl">127.0.0.1</span><span class="op">/</span>sparkifydb</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>sql</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>SELECT COUNT(<span class="op">*</span>) <span class="im">from</span> songplays<span class="op">;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> postgresql:<span class="op">//</span>student:<span class="op">***@</span><span class="fl">127.0.0.1</span><span class="op">/</span>sparkifydb</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="dv">1</span> rows affected.</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> Out[<span class="dv">1</span>]: count <span class="dv">6820</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Check out the project on <a href="https://github.com/ImadDabbura/data-modeling-with-postgres">github</a>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _pick_erp_system(<span class="op">**</span>context):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> context[<span class="st">"execution_date"</span>] <span class="op">&lt;</span> ERP_SWITCH_DATE:</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>           <span class="cf">return</span> <span class="st">"fetch_sales_old"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>           <span class="cf">return</span> <span class="st">"fetch_sales_new"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    pick_erp_system <span class="op">=</span> BranchPythonOperator(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="st">"pick_erp_system"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        python_callable<span class="op">=</span>_pick_erp_system,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    start <span class="op">&gt;&gt;</span> [pick_erp_system, fetch_weather]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    pick_erp_system <span class="op">&gt;&gt;</span> [fetch_sales_old, fetch_sales_new]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    fetch_sales_old <span class="op">&gt;&gt;</span> clean_sales_old</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    fetch_sales_new <span class="op">&gt;&gt;</span> clean_sales_new</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    [clean_sales_old, clean_sales_new, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    join_datasets <span class="op">&gt;&gt;</span> train_model</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    train_model <span class="op">&gt;&gt;</span> deploy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Since downstream tasks only get scheduled &amp; executed if all thier downstream tasks finished successfully, <code>jon_datasets</code> task will never success because with the above dependency either <code>clean_sales_old</code> or <code>clean_sales_new</code> would execute BUT NOT BOTH. We can adjust this using <code>trigger_rule</code> argument (default is <code>"all_success"</code> in the operatror by specifying <code>"non_failed"</code>. This will run downstream task if all downstream tasks haven’t failed even if they never executed. Therefore, we can change trigger_rule for <code>join_datasest</code> task.</li>
+<li>A better approach is to create DummyOperator that does nothing but join both branches and become the upstream task before <code>join_datasets</code> such as below: <img src="images/branching-v2.png"></li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    join_branch <span class="op">=</span> DummyOperator(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>       task_id<span class="op">=</span><span class="st">"join_erp_branch"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>       trigger_rule<span class="op">=</span><span class="st">"none_failed"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    start <span class="op">&gt;&gt;</span> [pick_erp_system, fetch_weather]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    pick_erp_system <span class="op">&gt;&gt;</span> [fetch_sales_old, fetch_sales_new]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    fetch_sales_old <span class="op">&gt;&gt;</span> clean_sales_old</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    fetch_sales_new <span class="op">&gt;&gt;</span> clean_sales_new</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    [clean_sales_old, clean_sales_new] <span class="op">&gt;&gt;</span> join_branch</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    [joen_erp_branch, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    join_datasets <span class="op">&gt;&gt;</span> train_model</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    train_model <span class="op">&gt;&gt;</span> deploy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><strong>Conditional tasks</strong>. Sometimes we only want to execute a task if a condition is true, otherwise, the task should be skipped. For example, if we want to only deploy the model on the most recent data and we don’t want <code>deploy_model</code> to always execute if we are doing <strong>backfilling</strong> -&gt; Create a conditional upstream task that checks the condition and raise Exception if the condition is False so <code>deploy_model</code> will be skipped. <img src="images/conditional-task.png"></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> airflow.exceptions <span class="im">import</span> AirflowSkipException</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> airflow.operators.python <span class="im">import</span> PythonOperator</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _latest_only(<span class="op">**</span>context):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># execution_time is the first time in the schedule interval</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># So following_schedule is the next execution_date</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        left_window <span class="op">=</span> context[<span class="st">"dag"</span>].following_schedule(context[<span class="st">"execution_date"</span>])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        right_window <span class="op">=</span> context[<span class="st">"dag"</span>].following_schedule(left_window)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        now <span class="op">=</span> pendulum.now(<span class="st">"utc"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Since execution of DAG starts after last time point passed of the </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># schedule interval -&gt; </span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> left_window <span class="op">&lt;</span> now <span class="op">&lt;=</span> right_window:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> AirflowSkipException(<span class="st">"Not the most recent run!"</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    latest_only <span class="op">=</span> PythonOperator(task_id<span class="op">=</span><span class="st">"latest_only"</span>, python_callable<span class="op">=</span>_latest_only, dag<span class="op">=</span>dag)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    latest_only <span class="op">&gt;&gt;</span> deplpy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><strong>Trigger rules</strong>: The triggering of Airflow tasks is controlled by the trigger rules which define the behavior of tasks and allow us to configure each task to respond to different situations.
+<ol type="1">
+<li>Be default, scheduler picks tasks ready to be executed when all its upstreams tasks were executed successfully and put it in the execute queue. The scheduler always checks downstream tasks if they are ready by checking all their downstream task completion state. Once there is a slot/worker, it will be executed. If any of the upstream tasks failed, it would have failed state and the upstream task won’t be scheduled and have <strong>state=upstream_failed</strong>. This is called <strong>progagation</strong> because the error is propagated from upstream to downstream tasks. This is the default trigger_rule which is <strong>all_success</strong>. If any of the down</li>
+<li>If any of the upstream task is skipped -&gt; downstream task will be skipped as well (propagation).</li>
+<li>Trigger rules:
+<ul>
+<li><code>all_success</code>: Triggers when all parent tasks have executed successfully</li>
+<li><code>all_failed</code>: Triggers when all parent tasks have failed or due to failure in their parents</li>
+<li><code>all_done</code>: Triggers when all parent tasks finished executing regardless of their state. Good to cleanup and shutdown resources regardless of the execution state of the workflow</li>
+<li><code>one_failed</code>: Triggers when at least 1 parent task failed and doesn’t wait for other parent tasks to finish</li>
+<li><code>one_success</code>: Triggers when at least 1 parent task succeeded and doesn’t wait for other parent tasks to finish</li>
+<li><code>none_failed</code>: Triggers if no parent task has failed but either completed successfully or skipped</li>
+<li><code>none_skipped</code>: Triggers if no parent task has skipped but either completed successfully or failed</li>
+<li><code>dummy</code>: Triggers regardless of the parent tasks state. Useful for testing</li>
+</ul></li>
+</ol></li>
+</ul>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

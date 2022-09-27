@@ -51,6 +51,14 @@
   {
     "listing": "/mlops-index.html",
     "items": [
+      "/mlops/airflow/Dependencies-Between-Tasks.html",
+      "/mlops/airflow/Triggering-Workflows.html",
+      "/mlops/airflow/Best-Practices.html",
+      "/mlops/airflow/Airflow-DAGs.html",
+      "/mlops/airflow/What-Is-Airflow.html",
+      "/mlops/airflow/Task-Context-And-Templating.html",
+      "/mlops/airflow/Sharing-Data-Between-Tasks.html",
+      "/mlops/airflow/Airflow-Scheduling.html",
       "/mlops/airflow/index.html"
     ]
   }

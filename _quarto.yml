@@ -65,3 +65,6 @@ format:
       light: flatly
       dark: darkly
     css: styles.css
+comments:
+    giscus: 
+          repo: dabburaimad/DabburaImad.github.io

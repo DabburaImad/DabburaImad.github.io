@@ -7,10 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2019-04-22">
-<meta name="description" content="Build a classifier to predict whether a given patient will have TIA and deploy the best model as a RESTful API.">
+<meta name="dcterms.date" content="2022-09-26">
 
-<title>Imad Dabbura - Transient Ischemic Attack</title>
+<title>Imad Dabbura - Airflow Part 1 - What is Airflow?</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,9 +66,9 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta name="twitter:title" content="Imad Dabbura - Transient Ischemic Attack">
-<meta name="twitter:description" content="Build a classifier to predict whether a given patient will have TIA and deploy the best model as a RESTful API.">
-<meta name="twitter:image" content="feature.jpg">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 1 - What is Airflow?">
+<meta name="twitter:description" content="Airflow is workflow orchestration tool that is written in Python at Airbnb. The workflow is also written in Python.">
+<meta name="twitter:image" content="feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -150,15 +149,10 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Transient Ischemic Attack</h1>
-                  <div>
-        <div class="description">
-          Build a classifier to predict whether a given patient will have TIA and deploy the best model as a RESTful API.
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">Machine Learning</div>
-                <div class="quarto-category">Deep Learning</div>
+      <h1 class="title">Airflow Part 1 - What is Airflow?</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Data Engineering</div>
+                <div class="quarto-category">MLOps</div>
               </div>
                   </div>
   </div>
@@ -176,7 +170,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">April 22, 2019</p>
+        <p class="date">September 26, 2022</p>
       </div>
     </div>
       
@@ -195,10 +189,53 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p><img src="feature.jpg" class="img-fluid"> A transient ischemic attack (TIA) is like a stroke, producing similar symptoms, but usually lasting only a few minutes and causing no permanent damage. Often called a ministroke, a transient ischemic attack may be a warning.</p>
-<p>About 1 in 3 people who have a transient ischemic attack will eventually have a stroke, with about half occurring within a year after the transient ischemic attack.</p>
-<p>The goal of this project is to build a binary classifier to predict Transient Ischemic Attack (TIA) and then deploy the best model as a RESTful API.</p>
-<p>Check out the project on <a href="https://github.com/ImadDabbura/transient-ischemic-attack">github</a>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="feature.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p><strong>Airflow</strong> is workflow orchestration tool that is written in Python at Airbnb. The workflow is also written in Python. It defines the workflow as a <strong>DAG</strong> so it is easy to determine the dependencies between tasks. If any task failed, we don’t need to rerun the workflow again, we can just run the failed task and all the tasks that depend on it. We can also do <em>backfilling</em> by running the pipeline/tasks for time intervals in the past.</p>
+<p>Airflow consists of mainly three components:</p>
+<ul>
+<li><strong>The Airflow scheduler</strong>: Parses DAGs, checks their schedule interval, and (if the DAGs’ schedule has passed) starts scheduling the DAGs’ tasks for execution by passing them to the Airflow workers.</li>
+<li><strong>The Airflow workers</strong>: Pick up tasks that are scheduled for execution and execute them. As such, the workers are responsible for actually “doing the work.”</li>
+<li><strong>The Airflow webserver</strong>: Visualizes the DAGs parsed by the scheduler and provides the main interface for users to monitor DAG runs and their results. It uses the metadata database which has all the logs and other metadata about tasks and workflows.</li>
+</ul>
+<p>Conceptually, the scheduling algorithm follows the following steps:</p>
+<ol type="1">
+<li>For each open (= uncompleted) task in the graph, do the following: – For each edge pointing toward the task, check if the “upstream” task on the other end of the edge has been completed. – If all upstream tasks have been completed, add the task under consideration to a queue of tasks to be executed.</li>
+<li>Execute the tasks in the execution queue, marking them completed once they finish performing their work.</li>
+<li>Jump back to step 1 and repeat until all tasks in the graph have been completed.</li>
+</ol>
+<p>The scheduler in Airflow runs roughly through the following steps:</p>
+<ol type="1">
+<li>Once users have written their workflows as DAGs, the files containing these DAGs are read by the scheduler to extract the corresponding tasks, dependen- cies, and schedule interval of each DAG.</li>
+<li>For each DAG, the scheduler then checks whether the schedule interval for the DAG has passed since the last time it was read. If so, the tasks in the DAG are scheduled for execution.</li>
+<li>For each scheduled task, the scheduler then checks whether the dependencies (= upstream tasks) of the task have been completed. If so, the task is added to the execution queue.</li>
+<li>The scheduler waits for several moments before starting a new loop by jumping back to step 1.</li>
+</ol>
+<p><img src="images/scheduler-overview.png"></p>
+<p>Airflow can be run:</p>
+<ol type="1">
+<li>In python virtual environment</li>
+<li>Inside Docker containers. In this case, Airflow scheduler, webserver, and metastore would run each in separate containers</li>
+</ol>
+<p>The main disadvantages of Airflow are:</p>
+<ol type="1">
+<li>It can get very messy and hard to understand for complex workflows</li>
+<li>It is best used for batch/recurring jobs NOT streaming jobs</li>
+<li>Mainly support static DAGs and hard to implement dynamic DAGs. Imagine you’re reading from a database and you want to create a step to process each record in the database (e.g.&nbsp;to make a prediction), but you don’t know in advance how many records there are in the database, Airflow won’t be able to handle that.</li>
+<li>It is monolithic, which means it packages the entire workflow into one container. If two different steps in your workflow have different requirements, you can, in theory, create different containers for them using Airflow’s DockerOperator, but it’s not that easy to do so.</li>
+<li>Airflow’s DAGs are not parameterized, which means you can’t pass parameters into your workflows. So if you want to run the same model with different learning rates, you’ll have to create different workflows.</li>
+</ol>
+<p>To setup Airflow locally inside Python virtual env:</p>
+<ol type="1">
+<li>pip install apache-airflow</li>
+<li>airflow init db # Initialize metastore locally using SQLite; not recommended for production</li>
+<li>airflow users create –username admin –password admin –firstname Anonymous –lastname Admin –role Admin –email admin@example.org # Create user</li>
+<li>airflow webserver # Start web server to use web UI</li>
+<li>airflow scheduler # Start scheduler, don’t use sequential in production</li>
+</ol>
 
 
 
